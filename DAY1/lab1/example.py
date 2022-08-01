@@ -17,24 +17,27 @@ DEVICE_IPS = ['192.168.0.10',
               '192.168.0.18'
               ]
 
+#SAMPLE_IP = ['192.168.0.10']
+
 # USE YOUR ATD CREDENTIALS 
 USERNAME = 'arista'
 PASSWORD = 'aristaum4t'
 
 if __name__ == '__main__':
+  for ip in DEVICE_IPS:
     payload = {'jsonrpc': '2.0',
                'method': 'runCmds',
                'params': {
                  'version': 1,
                  # commands to run
-                 'cmds': []
+                 'cmds': ["show hostname", "show version"]
                },
                'id': '1'
               }
-
     pp = PrettyPrinter()
-
-    device = DEVICE_IPS[0]
-    r = requests.post('https://{}:443/command-api'.format(device), json=payload, auth=(USERNAME, PASSWORD), verify=False)
+    r = requests.post('https://{}:443/command-api'.format(ip), json=payload, auth=(USERNAME, PASSWORD), verify=False)
     response = r.json()
-    pp.pprint(response)
+    result = response["result"]
+    showHostname = result[0]
+    showVersion = result[1]
+    print(f"{showHostname['fqdn']} is a {showVersion['modelName']} with serial number {showVersion['serialNumber']} and system MAC address {showVersion['systemMacAddress']}")

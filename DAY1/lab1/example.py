@@ -17,7 +17,7 @@ DEVICE_IPS = ['192.168.0.10',
               ]
 
 # USE YOUR ATD CREDENTIALS 
-USERNAME = ''
+USERNAME = 'admin'
 PASSWORD = ''
 
 if __name__ == '__main__':

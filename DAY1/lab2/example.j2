@@ -1,6 +1,13 @@
 {{ devices | length }} devices contacted in total
 -------------------------------------------------
-{% for device in devices %}
+{% for device in devices -%}
+{{ device }} (serial number {{ devices[device]["serial"] }})
+Total of {{ devices[device]["ARP"] | length }} entries found in ARP table
+{% for entry in devices[device]["ARP"] -%}
+- {{ entry[0] }} (MAC {{ entry[1] }}) learned on {{ entry[2] }}
+{% endfor %}
+{% endfor -%}
+
 
 {#}
 Note that you might encounter additional line spacing that you do not expect when using for loops and other control logic in Jinja, depending on your environment settings.
@@ -8,5 +15,3 @@ To avoid this, you can use - at the end of your control tags to prevent those li
 {% for foo in bar -%}
 {% endfor -%}
 {#}
-
-{% endfor %}

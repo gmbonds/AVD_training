@@ -3,4 +3,4 @@ ansible_network_os: eos
 ansible_become: yes
 ansible_become_method: enable
 ansible_user: arista 
-ansible_password: # USE YOUR ATD TOPOLOGY PASSWORD - in a production environment you would use vaulted credentials here
+ansible_password: aristaum4t # USE YOUR ATD TOPOLOGY PASSWORD - in a production environment you would use vaulted credentials here

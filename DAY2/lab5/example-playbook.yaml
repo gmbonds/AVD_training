@@ -4,17 +4,19 @@
     - name: Gather command outputs from devices
       # collect show version and show ip interface brief
       arista.eos.eos_command:
-        commands:
+        commands: 
+          - "show version"
+          - "show ip interface brief"
       register: switch_outputs
     - debug:
         var: switch_outputs
     - name: Create output directory
       delegate_to: localhost
       ansible.builtin.file: 
-        path: "/home/coder/project/labfiles/day2/lab5/outputs"
+        path: "/home/coder/project/LABFILES/day2/lab5/outputs"
         state: directory
     - name: Write device output to file
       delegate_to: localhost
       ansible.builtin.copy: 
-        content: # fill this out to pull JUST the command output collected above - replace \n with actual newlines
-        dest:  # fill this out to create a file with outputs per device, named after the device, in the outputs/ directory
+        content: "{{ switch_outputs }}" # fill this out to pull JUST the command output collected above - replace \n with actual newlines
+        dest: "outputs/{{ inventory_hostname }}.txt"  # fill this out to create a file with outputs per device, named after the device, in the outputs/ directory

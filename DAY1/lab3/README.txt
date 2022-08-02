@@ -12,8 +12,8 @@ After you create your bearer token, on the lefthand sidebar, click "REST API Exp
 Play around with clicking through this documentation to see what is possible.
 
 1) Using the REST API documentation, determine what endpoints you will need to talk to, to gather the following information
-1a) All EOS images currently loaded into CVP
-1b) All provisioning containers that currently exist in CVP
+1a) All EOS images currently loaded into CVP: /image/getImages.do
+1b) All provisioning containers that currently exist in CVP /inventory/containers
 2) Print this out nicely, with a Jinja template like so:
 
 Currently, CVP has the following EOS images loaded:

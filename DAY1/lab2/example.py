@@ -53,6 +53,6 @@ if __name__ == '__main__':
     else:
         #print(device_outputs)
         #pp.pprint(device_outputs)
-        print(template.render(devices=device_outputs))
+        print(template.render(devices=device_output))
         pass
     

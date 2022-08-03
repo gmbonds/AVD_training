@@ -33,4 +33,4 @@ Click the green "Create repository" button.
 
 On the next page, look for the section header "push an existing repository".
 Paste those commands into your VSCode terminal, and you should see git push your commits to Github.
-Refresh the page and confirm you now see your files in the new repository.
+Refresh the page and confirm you now see your files in the new repository

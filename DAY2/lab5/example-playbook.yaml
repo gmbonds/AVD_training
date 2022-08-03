@@ -18,5 +18,5 @@
     - name: Write device output to file
       delegate_to: localhost
       ansible.builtin.copy: 
-        content: "{{ switch_outputs }}" # fill this out to pull JUST the command output collected above - replace \n with actual newlines
+        content: "{{ switch_outputs| replace('\\n', '\n') }}" # fill this out to pull JUST the command output collected above - replace \n with actual newlines
         dest: "outputs/{{ inventory_hostname }}.txt"  # fill this out to create a file with outputs per device, named after the device, in the outputs/ directory

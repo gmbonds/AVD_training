@@ -1,1 +1,21 @@
-{"changed": false, "stdout": ["Arista vEOS-lab\nHardware version: \nSerial number: 8D4F5D212044DFE59C6513AB6551F70F\nHardware MAC address: 001c.737b.2d91\nSystem MAC address: 001c.737b.2d91\n\nSoftware image version: 4.27.2F\nArchitecture: i686\nInternal build version: 4.27.2F-26069621.4272F\nInternal build ID: b3360a82-d532-4043-b6b0-50707eede2a9\nImage format version: 1.0\nImage optimization: None\n\nUptime: 34 minutes\nTotal memory: 2004808 kB\nFree memory: 1102344 kB", "Address\nInterface           IP Address              Status       Protocol                 MTU    Owner  \n------------------- ----------------------- ------------ -------------------- ---------- -------\nManagement1         192.168.0.16/24         up           up                      1500           \nPort-Channel1       172.16.112.201/24       down         lowerlayerdown          1500           \nPort-Channel2       172.16.115.100/24       down         lowerlayerdown          1500"], "stdout_lines": [["Arista vEOS-lab", "Hardware version: ", "Serial number: 8D4F5D212044DFE59C6513AB6551F70F", "Hardware MAC address: 001c.737b.2d91", "System MAC address: 001c.737b.2d91", "", "Software image version: 4.27.2F", "Architecture: i686", "Internal build version: 4.27.2F-26069621.4272F", "Internal build ID: b3360a82-d532-4043-b6b0-50707eede2a9", "Image format version: 1.0", "Image optimization: None", "", "Uptime: 34 minutes", "Total memory: 2004808 kB", "Free memory: 1102344 kB"], ["Address", "Interface           IP Address              Status       Protocol                 MTU    Owner  ", "------------------- ----------------------- ------------ -------------------- ---------- -------", "Management1         192.168.0.16/24         up           up                      1500           ", "Port-Channel1       172.16.112.201/24       down         lowerlayerdown          1500           ", "Port-Channel2       172.16.115.100/24       down         lowerlayerdown          1500"]], "failed": false}
+{'changed': False, 'stdout': ['Arista vEOS-lab
+Hardware version: 
+Serial number: 8D4F5D212044DFE59C6513AB6551F70F
+Hardware MAC address: 001c.737b.2d91
+System MAC address: 001c.737b.2d91
+
+Software image version: 4.27.2F
+Architecture: i686
+Internal build version: 4.27.2F-26069621.4272F
+Internal build ID: b3360a82-d532-4043-b6b0-50707eede2a9
+Image format version: 1.0
+Image optimization: None
+
+Uptime: 5 hours and 26 minutes
+Total memory: 2004808 kB
+Free memory: 1113040 kB', 'Address
+Interface           IP Address              Status       Protocol                 MTU    Owner  
+------------------- ----------------------- ------------ -------------------- ---------- -------
+Management1         192.168.0.16/24         up           up                      1500           
+Port-Channel1       172.16.112.201/24       down         lowerlayerdown          1500           
+Port-Channel2       172.16.115.100/24       down         lowerlayerdown          1500'], 'stdout_lines': [['Arista vEOS-lab', 'Hardware version: ', 'Serial number: 8D4F5D212044DFE59C6513AB6551F70F', 'Hardware MAC address: 001c.737b.2d91', 'System MAC address: 001c.737b.2d91', '', 'Software image version: 4.27.2F', 'Architecture: i686', 'Internal build version: 4.27.2F-26069621.4272F', 'Internal build ID: b3360a82-d532-4043-b6b0-50707eede2a9', 'Image format version: 1.0', 'Image optimization: None', '', 'Uptime: 5 hours and 26 minutes', 'Total memory: 2004808 kB', 'Free memory: 1113040 kB'], ['Address', 'Interface           IP Address              Status       Protocol                 MTU    Owner  ', '------------------- ----------------------- ------------ -------------------- ---------- -------', 'Management1         192.168.0.16/24         up           up                      1500           ', 'Port-Channel1       172.16.112.201/24       down         lowerlayerdown          1500           ', 'Port-Channel2       172.16.115.100/24       down         lowerlayerdown          1500']], 'failed': False}

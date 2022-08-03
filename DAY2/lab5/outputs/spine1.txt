@@ -1,1 +1,19 @@
-{"changed": false, "stdout": ["Arista vEOS-lab\nHardware version: \nSerial number: 5DECFFE9E33961213DAD5BB7D9BA6437\nHardware MAC address: 001c.739c.29c3\nSystem MAC address: 001c.739c.29c3\n\nSoftware image version: 4.27.2F\nArchitecture: i686\nInternal build version: 4.27.2F-26069621.4272F\nInternal build ID: b3360a82-d532-4043-b6b0-50707eede2a9\nImage format version: 1.0\nImage optimization: None\n\nUptime: 34 minutes\nTotal memory: 2004808 kB\nFree memory: 1109176 kB", "Address\nInterface         IP Address            Status       Protocol           MTU    Owner  \n----------------- --------------------- ------------ -------------- ---------- -------\nManagement1       192.168.0.10/24       up           up                1500"], "stdout_lines": [["Arista vEOS-lab", "Hardware version: ", "Serial number: 5DECFFE9E33961213DAD5BB7D9BA6437", "Hardware MAC address: 001c.739c.29c3", "System MAC address: 001c.739c.29c3", "", "Software image version: 4.27.2F", "Architecture: i686", "Internal build version: 4.27.2F-26069621.4272F", "Internal build ID: b3360a82-d532-4043-b6b0-50707eede2a9", "Image format version: 1.0", "Image optimization: None", "", "Uptime: 34 minutes", "Total memory: 2004808 kB", "Free memory: 1109176 kB"], ["Address", "Interface         IP Address            Status       Protocol           MTU    Owner  ", "----------------- --------------------- ------------ -------------- ---------- -------", "Management1       192.168.0.10/24       up           up                1500"]], "failed": false}
+{'changed': False, 'stdout': ['Arista vEOS-lab
+Hardware version: 
+Serial number: 5DECFFE9E33961213DAD5BB7D9BA6437
+Hardware MAC address: 001c.739c.29c3
+System MAC address: 001c.739c.29c3
+
+Software image version: 4.27.2F
+Architecture: i686
+Internal build version: 4.27.2F-26069621.4272F
+Internal build ID: b3360a82-d532-4043-b6b0-50707eede2a9
+Image format version: 1.0
+Image optimization: None
+
+Uptime: 5 hours and 26 minutes
+Total memory: 2004808 kB
+Free memory: 1119816 kB', 'Address
+Interface         IP Address            Status       Protocol           MTU    Owner  
+----------------- --------------------- ------------ -------------- ---------- -------
+Management1       192.168.0.10/24       up           up                1500'], 'stdout_lines': [['Arista vEOS-lab', 'Hardware version: ', 'Serial number: 5DECFFE9E33961213DAD5BB7D9BA6437', 'Hardware MAC address: 001c.739c.29c3', 'System MAC address: 001c.739c.29c3', '', 'Software image version: 4.27.2F', 'Architecture: i686', 'Internal build version: 4.27.2F-26069621.4272F', 'Internal build ID: b3360a82-d532-4043-b6b0-50707eede2a9', 'Image format version: 1.0', 'Image optimization: None', '', 'Uptime: 5 hours and 26 minutes', 'Total memory: 2004808 kB', 'Free memory: 1119816 kB'], ['Address', 'Interface         IP Address            Status       Protocol           MTU    Owner  ', '----------------- --------------------- ------------ -------------- ---------- -------', 'Management1       192.168.0.10/24       up           up                1500']], 'failed': False}

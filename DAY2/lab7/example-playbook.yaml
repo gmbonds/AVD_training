@@ -7,7 +7,81 @@
   tags:
     - configuration
   tasks:
-    # Add tasks here to build your banners
+    - name: Gather facts 
+      arista.eos.eos_facts:
+    - debug: 
+        msg: "{{ ansible_net_hostname }} - model {{ ansible_net_model }} device, serial number {{ ansible_net_serialnum }}"
+        
+    - name: Create config directory
+      delegate_to: localhost
+      ansible.builtin.file: 
+        path: "/home/coder/project/LABFILES/DAY2/lab7/configs"
+        state: directory
+
+    - name: Template login banners for devices
+      template: 
+        src: "/home/coder/project/LABFILES/DAY2/lab7/{{ template_directory }}/banner.j2"
+        dest: "/home/coder/project/LABFILES/DAY2/lab7/configs/{{ inventory_hostname }}_banner.cfg"
+
+# Task that creates a dict configs with the format co
+# Vars are PLAY local 
+# Facts are local to playbook
+# - name: Create configlet data struct
+#   hosts: eos
+#   tags:
+#     - configuration
+#   gather_facts: no
+#   vars:
+#     configs: 
+#       hostname: "{{ lookup('file', '/home/coder/project/LABFILES/DAY2/lab7/configs/{{inventory_hostname}}_banner.cfg') }}"
+#   tasks:
+#     - name: print configs
+#       debug:
+#         msg: "{{configs}}"
+
+
+# configlet:
+#   key: value
+#   key: value
+
+
+# HOW DO I CREATE THE KEYS??!?!?
+
+- name: Create configlet data struct
+  hosts: cvp
+  tags:
+    - vars
+  gather_facts: no
+  tasks:
+    # - name: set facts for configlets
+    #   ansible.builtin.set_fact:
+    #     configlets: {"item": "{{item}}"}
+    #   with_items: "{{groups['eos']}}"
+    #   register: config_file
+
+    # - name: print configs
+    #   debug:
+    #     msg: "{{config_file['results']['ansible_facts']}}"
+
+
+
+    # - name: print Hosts
+    #   debug:
+    #     msg: "{{item}}"
+    #   with_items: "{{groups['eos']}}"
+        
+# Problem: we have a dictionary called configlets which contains key value pairs for each configlet
+# We need to dynamically load those keys and values into the configlets
+# so we don't have to list out all of the keys and values
+- name: Create configlet data struct
+  hosts: cvp
+  tags:
+    - vars
+  gather_facts: no
+  tasks:
+  - name: "TEST"
+    debug:
+      msg: "{{config_file}}"
 
 - name: Deploy configlets and configlet mappings to CVP 
   hosts: cvp
@@ -29,8 +103,9 @@
       Spine: 
         parentContainerName: Tenant
     configlets:
-      # add additional configlet mappings as needed
-      motd_banner: "{{ lookup('file', '/home/coder/project/labfiles/day2/lab7/configs/motd_banner.cfg') }}"
+      #group_banner: "{{ lookup('file', '/home/coder/project/LABFILES/DAY2/lab7/configs/{{ inventory_hostname }}_banner.cfg') }}"
+      #configlet_1: "{{hostvars}}"
+      motd_banner: "{{ lookup('file', '/home/coder/project/LABFILES/DAY2/lab7/configs/motd_banner.cfg') }}"
     managed_devices:
       - fqdn: host1.atd.lab
         parentContainerName: Hosts 
@@ -68,8 +143,11 @@
     - name: Collect facts from CVP 
       arista.cvp.cv_facts_v3:
       register: CVP_FACTS
-    # - debug:
-    #     var: CVP_FACTS
+    - debug:
+        var: CVP_FACTS
+    - name: print configs
+      debug:
+        msg: "{{config_file}}"
     - name: Build provisioning containers in CVP 
       arista.cvp.cv_container_v3:
         topology: "{{ provisioning_containers }}"
@@ -77,6 +155,10 @@
     - name: Load configlets into CVP 
       arista.cvp.cv_configlet_v3:
         configlets: "{{ configlets }}"
+        configlets_notes: "Configlet managed by Ansible, created in TAC training lab"
+    - name: Load 2nd Round configlets into CVP 
+      arista.cvp.cv_configlet_v3:
+        configlets: "{{  }}"
         configlets_notes: "Configlet managed by Ansible, created in TAC training lab"
     - name: Map configlets to devices
       arista.cvp.cv_device_v3:

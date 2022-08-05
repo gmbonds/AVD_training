@@ -1,0 +1,886 @@
+ansible_connection: httpapi
+ansible_network_os: eos
+ansible_user: arista
+ansible_ssh_pass: aristaum4t
+ansible_become: true
+ansible_become_method: enable
+ansible_httpapi_use_ssl: true
+ansible_httpapi_validate_certs: false
+local_users:
+  arista:
+    privilege: 15
+    role: network-admin
+    sha512_password: $6$tZGNm.Lk9pVAJIOv$ofRKnm13qcmn5F22PnURGUJqW7TAMR4OLGz0z7KJXcTcXhufe.vio0p1hsHMIa0AeYi/0zF8MWJbCEvlfV3D11
+mgmt_gateway: 192.168.0.1
+mgmt_interface_vrf: default
+dns_domain: atd.lab
+ntp:
+  local_interface:
+    name: Management1
+    vrf: default
+  servers:
+  - name: 192.168.0.1
+    vrf: default
+    iburst: true
+management_eapi: null
+management_api_http:
+  enable_http: false
+  enable_https: true
+  default_services: true
+  enable_vrfs:
+    default: null
+management_defaults:
+  secret:
+    hash: sha512
+daemon_terminattr:
+  cvaddrs:
+  - 192.168.0.5:9910
+  cvauth:
+    method: key
+    key: atd-lab
+  cvvrf: default
+  ingestexclude: /Sysdb/cell/1/agent,/Sysdb/cell/2/agent
+  smashexcludes: ale,flexCounter,hardware,kni,pulse,strata
+  disable_aaa: true
+fabric_name: ATD_FABRIC
+underlay_p2p_network_summary: 172.18.255.0/24
+vtep_loopback_ipv4_pool: 192.168.254.0/24
+mlag_ips:
+  leaf_peer_l3: 10.255.251.0/24
+  mlag_peer: 10.255.252.0/24
+vxlan_vlan_aware_bundles: true
+bgp_peer_groups:
+  IPv4_UNDERLAY_PEERS:
+    password: AQQvKeimxJu+uGQ/yYvv9w==
+  EVPN_OVERLAY_PEERS:
+    password: q+VNViP5i4rVjW1cxFv2wA==
+  MLAG_IPv4_UNDERLAY_PEER:
+    password: vnEaG8gMeQf3d3cN6PktXQ==
+spine:
+  defaults:
+    platform: vEOS-LAB
+    bgp_as: 65001
+    loopback_ipv4_pool: 192.168.251.0/24
+    bgp_defaults:
+    - no bgp default ipv4-unicast
+    - distance bgp 20 200 200
+    leaf_as_range: 65101-65132
+    mlag_peer_ipv4_pool: 10.255.252.0/24
+    mlag_peer_l3_ipv4_pool: 10.255.251.0/24
+  nodes:
+    spine1:
+      id: 1
+      mgmt_ip: 192.168.0.10/24
+      mac_address: 00:1c:73:b0:c6:01
+    spine2:
+      id: 2
+      mgmt_ip: 192.168.0.11/24
+      mac_address: 00:1c:73:b1:c6:01
+l3leaf:
+  defaults:
+    platform: vEOS-LAB
+    bgp_as: 65100
+    loopback_ipv4_pool: 192.168.255.0/24
+    vtep_loopback_ipv4_pool: 192.168.254.0/24
+    uplink_switches:
+    - spine1
+    - spine2
+    uplink_interfaces:
+    - Ethernet2
+    - Ethernet3
+    mlag_interfaces:
+    - Ethernet1
+    - Ethernet6
+    uplink_ipv4_pool: 172.18.255.0/24
+    mlag_peer_ipv4_pool: 10.255.252.0/24
+    mlag_peer_l3_ipv4_pool: 10.255.251.0/24
+    spanning_tree_mode: mstp
+    spanning_tree_priority: 4096
+    virtual_router_mac_address: 00:dc:00:00:00:0a
+    bgp_defaults:
+    - no bgp default ipv4-unicast
+    - distance bgp 20 200 200
+  node_groups:
+    ATD_LEAF1:
+      bgp_as: 65101
+      filter:
+        tenants:
+        - all
+        tags:
+        - web
+        - app
+      nodes:
+        leaf1:
+          id: 11
+          mgmt_ip: 192.168.0.12/24
+          uplink_switch_interfaces:
+          - Ethernet2
+          - Ethernet2
+          mac_address: 00:1c:73:b2:c6:01
+        leaf2:
+          id: 2
+          mgmt_ip: 192.168.0.13/24
+          uplink_switch_interfaces:
+          - Ethernet3
+          - Ethernet3
+          mac_address: 00:1c:73:b3:c6:01
+    ATD_LEAF2:
+      bgp_as: 65102
+      filter:
+        tenants:
+        - Tenant_A
+        - Tenant_B
+        - Tenant_C
+        tags:
+        - opzone
+        - web
+        - app
+        - db
+        - vmotion
+        - nfs
+      nodes:
+        leaf3:
+          id: 3
+          mgmt_ip: 192.168.0.14/24
+          uplink_switch_interfaces:
+          - Ethernet4
+          - Ethernet4
+          mac_address: 00:1c:73:b4:c6:01
+        leaf4:
+          id: 4
+          mgmt_ip: 192.168.0.15/24
+          uplink_switch_interfaces:
+          - Ethernet5
+          - Ethernet5
+          mac_address: 00:1c:73:b5:c6:01
+spine_bgp_defaults:
+- no bgp default ipv4-unicast
+- distance bgp 20 200 200
+leaf_bgp_defaults:
+- no bgp default ipv4-unicast
+- distance bgp 20 200 200
+p2p_uplinks_mtu: 1500
+bfd_multihop:
+  interval: 1200
+  min_rx: 1200
+  multiplier: 3
+aaa_authorization:
+  exec:
+    default: group atds local
+evpn_hostflap_detection:
+  enabled: true
+  threshold: 10
+  window: 180
+event_handlers:
+  evpn-blacklist-recovery:
+    action_type: bash
+    action: FastCli -p 15 -c "clear bgp evpn host-flap"
+    delay: 300
+    trigger: on-logging
+    regex: EVPN-3-BLACKLISTED_DUPLICATE_MAC
+    asynchronous: true
+aliases: 'alias test2 show ip int brief
+
+  alias test3 show ip int brief
+
+  alias test4 show ip int brief
+
+  alias test6 show ip int brief
+
+  '
+port_profiles:
+  TENANT_A_B:
+    mode: trunk
+    vlans: 110-111,210-214
+  TENANT_A:
+    mode: trunk
+    vlans: '110'
+  TENANT_B:
+    mode: trunk
+    vlans: 120-212
+servers:
+  server01:
+    rack: RackB
+    adapters:
+    - server_ports:
+      - Ethernet1
+      - Ethernet2
+      - Ethernet3
+      - Ethernet4
+      switch_ports:
+      - Ethernet4
+      - Ethernet5
+      switches:
+      - leaf1
+      - leaf2
+      profile: TENANT_B
+      port_channel:
+        state: present
+        description: PortChannel1
+        mode: active
+  server02:
+    rack: RackB
+    adapters:
+    - server_ports:
+      - Ethernet1
+      - Ethernet2
+      - Ethernet3
+      - Ethernet4
+      switch_ports:
+      - Ethernet4
+      - Ethernet5
+      switches:
+      - leaf3
+      - leaf4
+      profile: TENANT_B
+      port_channel:
+        state: present
+        description: PortChannel1
+        mode: active
+tenants:
+  Tenant_A:
+    mac_vrf_vni_base: 10000
+    vrfs:
+      Tenant_A_OP_Zone:
+        vrf_vni: 10
+        vtep_diagnostic:
+          loopback: 100
+          loopback_ip_range: 10.255.23.0/24
+        svis:
+          110:
+            name: Tenant_A_OP_Zone_1
+            tags:
+            - opzone
+            enabled: true
+            ip_address_virtual: 10.12.10.1/24
+          111:
+            vni_override: 50111
+            name: Tenant_A_OP_Zone_2
+            tags:
+            - opzone
+            enabled: true
+            ip_address_virtual: 10.12.11.1/24
+      Tenant_A_WEB_Zone:
+        vrf_vni: 11
+        svis:
+          120:
+            name: Tenant_A_WEB_Zone_1
+            tags:
+            - web
+            - erp1
+            enabled: true
+            ip_address_virtual: 10.12.20.1/24
+          121:
+            name: Tenant_A_WEBZone_2
+            tags:
+            - web
+            enabled: true
+            ip_address_virtual: 10.12.21.1/24
+          122:
+            name: Tenant_A_WEBZone_3
+            tags:
+            - web
+            enabled: true
+            ip_address_virtual: 10.12.22.1/24
+          124:
+            name: Tenant_A_WEBZone_4
+            tags:
+            - web
+            enabled: true
+            ip_address_virtual: 10.12.23.1/24
+      Tenant_A_APP_Zone:
+        vrf_vni: 12
+        svis:
+          130:
+            name: Tenant_A_APP_Zone_1
+            tags:
+            - app
+            - erp1
+            enabled: true
+            ip_address_virtual: 10.12.30.1/24
+          131:
+            name: Tenant_A_APP_Zone_2
+            tags:
+            - app
+            enabled: true
+            ip_address_virtual: 10.12.31.1/24
+      Tenant_A_DB_Zone:
+        vrf_vni: 13
+        svis:
+          140:
+            name: Tenant_A_DB_BZone_1
+            tags:
+            - db
+            - erp1
+            enabled: true
+            ip_address_virtual: 10.12.40.1/24
+          141:
+            name: Tenant_A_DB_Zone_2
+            tags:
+            - db
+            enabled: true
+            ip_address_virtual: 10.12.41.1/24
+      Tenant_A_WAN_Zone:
+        vrf_vni: 14
+        svis:
+          150:
+            name: Tenant_A_WAN_Zone_1
+            tags:
+            - wan
+            enabled: true
+            ip_address_virtual: 10.12.40.1/24
+    l2vlans:
+      160:
+        vni_override: 50160
+        name: Tenant_A_VMOTION
+        tags:
+        - vmotion
+      161:
+        name: Tenant_A_NFS
+        tags:
+        - nfs
+  Tenant_B:
+    mac_vrf_vni_base: 20000
+    vrfs:
+      Tenant_B_OP_Zone:
+        vrf_vni: 20
+        svis:
+          210:
+            name: Tenant_B_OP_Zone_1
+            tags:
+            - opzone
+            enabled: true
+            ip_address_virtual: 10.20.11.1/24
+          211:
+            name: Tenant_B_OP_Zone_2
+            tags:
+            - opzone
+            enabled: true
+            ip_address_virtual: 10.20.21.1/24
+      Tenant_B_WAN_Zone:
+        vrf_vni: 21
+        svis:
+          250:
+            name: Tenant_B_WAN_Zone_1
+            tags:
+            - wan
+            enabled: true
+            ip_address_virtual: 10.20.50.1/24
+      Tenant_B_TEST_Zone:
+        vrf_vni: 22
+        svis:
+          252:
+            name: Tenant_B_WAN_Zone_1
+            tags:
+            - test
+            enabled: true
+            ip_address_virtual: 10.22.50.1/24
+  Tenant_C:
+    mac_vrf_vni_base: 30000
+    vrfs:
+      Tenant_C_OP_Zone:
+        vrf_vni: 30
+        svis:
+          310:
+            name: Tenant_C_OP_Zone_1
+            tags:
+            - opzone
+            enabled: true
+            ip_address_virtual: 10.30.10.1/24
+          311:
+            name: Tenant_C_OP_Zone_2
+            tags:
+            - opzone
+            enabled: true
+            ip_address_virtual: 10.30.11.1/24
+      Tenant_C_WAN_Zone:
+        vrf_vni: 31
+        svis:
+          350:
+            name: Tenant_C_WAN_Zone_1
+            tags:
+            - wan
+            enabled: true
+            ip_address_virtual: 10.30.50.1/24
+type: l3leaf
+inventory_file: /home/coder/project/LABFILES/DAY3/inventory.yml
+inventory_dir: /home/coder/project/LABFILES/DAY3
+ansible_host: 192.168.0.15
+inventory_hostname: leaf4
+inventory_hostname_short: leaf4
+group_names:
+- ATD_FABRIC
+- ATD_LEAF2
+- ATD_LEAFS
+- ATD_SERVERS
+- ATD_TENANTS_NETWORKS
+- AVD_LAB
+ansible_facts:
+  switch:
+    type: l3leaf
+    node_type_key: l3leaf
+    connected_endpoints: true
+    default_evpn_role: client
+    default_underlay_routing_protocol: ebgp
+    mpls_lsr: false
+    mlag_support: true
+    network_services_l2: true
+    network_services_l3: true
+    underlay_router: true
+    uplink_type: p2p
+    vtep: true
+    ip_addressing:
+      router_id: ip_addressing/router-id.j2
+      mlag_ip_primary: ip_addressing/mlag-ip-primary.j2
+      mlag_ip_secondary: ip_addressing/mlag-ip-secondary.j2
+      mlag_l3_ip_primary: ip_addressing/mlag-l3-ip-primary.j2
+      mlag_l3_ip_secondary: ip_addressing/mlag-l3-ip-secondary.j2
+      p2p_uplinks_ip: ip_addressing/p2p-uplinks-ip.j2
+      p2p_uplinks_peer_ip: ip_addressing/p2p-uplinks-peer-ip.j2
+      vtep_ip_mlag: ip_addressing/vtep-ip-mlag.j2
+      vtep_ip: ip_addressing/vtep-ip.j2
+    interface_descriptions:
+      underlay_ethernet_interfaces: interface_descriptions/underlay/ethernet-interfaces.j2
+      underlay_port_channel_interfaces: interface_descriptions/underlay/port-channel-interfaces.j2
+      mlag_ethernet_interfaces: interface_descriptions/mlag/ethernet-interfaces.j2
+      mlag_port_channel_interfaces: interface_descriptions/mlag/port-channel-interfaces.j2
+      connected_endpoints_ethernet_interfaces: interface_descriptions/connected_endpoints/ethernet-interfaces.j2
+      connected_endpoints_port_channel_interfaces: interface_descriptions/connected_endpoints/port-channel-interfaces.j2
+      overlay_loopback_interface: interface_descriptions/loopback_interfaces/overlay-loopback.j2
+      vtep_loopback_interface: interface_descriptions/loopback_interfaces/vtep-loopback.j2
+    group: ATD_LEAF2
+    id: 4
+    mgmt_ip: 192.168.0.15/24
+    platform: vEOS-LAB
+    platform_settings:
+      platforms:
+      - default
+      reload_delay:
+        mlag: 300
+        non_mlag: 330
+      feature_support:
+        queue_monitor_length_notify: false
+    mgmt_interface: Management1
+    underlay_routing_protocol: ebgp
+    overlay_routing_protocol: ebgp
+    filter_tenants:
+    - Tenant_A
+    - Tenant_B
+    - Tenant_C
+    filter_tags:
+    - opzone
+    - web
+    - app
+    - db
+    - vmotion
+    - nfs
+    spanning_tree_mode: mstp
+    spanning_tree_priority: 4096
+    igmp_snooping_enabled: true
+    virtual_router_mac_address: 00:dc:00:00:00:0a
+    max_uplink_switches: 2
+    max_parallel_uplinks: 1
+    uplink_switches:
+    - spine1
+    - spine2
+    uplink_switch_interfaces:
+    - Ethernet5
+    - Ethernet5
+    uplink_interfaces:
+    - Ethernet2
+    - Ethernet3
+    loopback_ipv4_pool: 192.168.255.0/24
+    loopback_ipv4_offset: 0
+    uplink_ipv4_pool: 172.18.255.0/24
+    router_id: 192.168.255.4
+    bgp_as: '65102'
+    bgp_defaults:
+    - no bgp default ipv4-unicast
+    - distance bgp 20 200 200
+    evpn_role: client
+    evpn_route_servers:
+    - spine1
+    - spine2
+    mlag: true
+    mlag_group: ATD_LEAF2
+    mlag_ibgp_origin_incomplete: true
+    mlag_peer_vlan: 4094
+    mlag_peer_link_allowed_vlans: 2-4094
+    mlag_dual_primary_detection: false
+    mlag_interfaces:
+    - Ethernet1
+    - Ethernet6
+    mlag_l3: true
+    mlag_peer_l3_vlan: 4093
+    mlag_role: secondary
+    mlag_peer: leaf3
+    mlag_peer_mgmt_ip: 192.168.0.14
+    mlag_ip: 10.255.252.5
+    mlag_peer_ip: 10.255.252.4
+    mlag_l3_ip: 10.255.251.5
+    mlag_peer_l3_ip: 10.255.251.4
+    vtep_loopback_ipv4_pool: 192.168.254.0/24
+    vtep_loopback: Loopback1
+    vtep_ip: 192.168.254.3
+    tenants:
+      Tenant_A:
+        vrfs:
+          Tenant_A_APP_Zone:
+            svis:
+            - 130
+            - 131
+          Tenant_A_DB_Zone:
+            svis:
+            - 140
+            - 141
+          Tenant_A_OP_Zone:
+            svis:
+            - 110
+            - 111
+          Tenant_A_WEB_Zone:
+            svis:
+            - 120
+            - 121
+            - 122
+            - 124
+        l2vlans:
+        - 160
+        - 161
+      Tenant_B:
+        vrfs:
+          Tenant_B_OP_Zone:
+            svis:
+            - 210
+            - 211
+        l2vlans: []
+      Tenant_C:
+        vrfs:
+          Tenant_C_OP_Zone:
+            svis:
+            - 310
+            - 311
+        l2vlans: []
+    vlans:
+    - 130
+    - 131
+    - 140
+    - 141
+    - 110
+    - 111
+    - 120
+    - 121
+    - 122
+    - 124
+    - 160
+    - 161
+    - 210
+    - 211
+    - 310
+    - 311
+  topology:
+    links:
+      Ethernet2:
+        peer: spine1
+        peer_interface: Ethernet5
+        peer_type: spine
+        peer_bgp_as: '65001'
+        type: underlay_p2p
+        ip_address: 172.18.255.13
+        peer_ip_address: 172.18.255.12
+      Ethernet3:
+        peer: spine2
+        peer_interface: Ethernet5
+        peer_type: spine
+        peer_bgp_as: '65001'
+        type: underlay_p2p
+        ip_address: 172.18.255.15
+        peer_ip_address: 172.18.255.14
+    peers:
+    - spine1
+    - spine2
+    vlans:
+    - 130
+    - 131
+    - 140
+    - 141
+    - 110
+    - 111
+    - 120
+    - 121
+    - 122
+    - 124
+    - 160
+    - 161
+    - 210
+    - 211
+    - 310
+    - 311
+switch:
+  type: l3leaf
+  node_type_key: l3leaf
+  connected_endpoints: true
+  default_evpn_role: client
+  default_underlay_routing_protocol: ebgp
+  mpls_lsr: false
+  mlag_support: true
+  network_services_l2: true
+  network_services_l3: true
+  underlay_router: true
+  uplink_type: p2p
+  vtep: true
+  ip_addressing:
+    router_id: ip_addressing/router-id.j2
+    mlag_ip_primary: ip_addressing/mlag-ip-primary.j2
+    mlag_ip_secondary: ip_addressing/mlag-ip-secondary.j2
+    mlag_l3_ip_primary: ip_addressing/mlag-l3-ip-primary.j2
+    mlag_l3_ip_secondary: ip_addressing/mlag-l3-ip-secondary.j2
+    p2p_uplinks_ip: ip_addressing/p2p-uplinks-ip.j2
+    p2p_uplinks_peer_ip: ip_addressing/p2p-uplinks-peer-ip.j2
+    vtep_ip_mlag: ip_addressing/vtep-ip-mlag.j2
+    vtep_ip: ip_addressing/vtep-ip.j2
+  interface_descriptions:
+    underlay_ethernet_interfaces: interface_descriptions/underlay/ethernet-interfaces.j2
+    underlay_port_channel_interfaces: interface_descriptions/underlay/port-channel-interfaces.j2
+    mlag_ethernet_interfaces: interface_descriptions/mlag/ethernet-interfaces.j2
+    mlag_port_channel_interfaces: interface_descriptions/mlag/port-channel-interfaces.j2
+    connected_endpoints_ethernet_interfaces: interface_descriptions/connected_endpoints/ethernet-interfaces.j2
+    connected_endpoints_port_channel_interfaces: interface_descriptions/connected_endpoints/port-channel-interfaces.j2
+    overlay_loopback_interface: interface_descriptions/loopback_interfaces/overlay-loopback.j2
+    vtep_loopback_interface: interface_descriptions/loopback_interfaces/vtep-loopback.j2
+  group: ATD_LEAF2
+  id: 4
+  mgmt_ip: 192.168.0.15/24
+  platform: vEOS-LAB
+  platform_settings:
+    platforms:
+    - default
+    reload_delay:
+      mlag: 300
+      non_mlag: 330
+    feature_support:
+      queue_monitor_length_notify: false
+  mgmt_interface: Management1
+  underlay_routing_protocol: ebgp
+  overlay_routing_protocol: ebgp
+  filter_tenants:
+  - Tenant_A
+  - Tenant_B
+  - Tenant_C
+  filter_tags:
+  - opzone
+  - web
+  - app
+  - db
+  - vmotion
+  - nfs
+  spanning_tree_mode: mstp
+  spanning_tree_priority: 4096
+  igmp_snooping_enabled: true
+  virtual_router_mac_address: 00:dc:00:00:00:0a
+  max_uplink_switches: 2
+  max_parallel_uplinks: 1
+  uplink_switches:
+  - spine1
+  - spine2
+  uplink_switch_interfaces:
+  - Ethernet5
+  - Ethernet5
+  uplink_interfaces:
+  - Ethernet2
+  - Ethernet3
+  loopback_ipv4_pool: 192.168.255.0/24
+  loopback_ipv4_offset: 0
+  uplink_ipv4_pool: 172.18.255.0/24
+  router_id: 192.168.255.4
+  bgp_as: '65102'
+  bgp_defaults:
+  - no bgp default ipv4-unicast
+  - distance bgp 20 200 200
+  evpn_role: client
+  evpn_route_servers:
+  - spine1
+  - spine2
+  mlag: true
+  mlag_group: ATD_LEAF2
+  mlag_ibgp_origin_incomplete: true
+  mlag_peer_vlan: 4094
+  mlag_peer_link_allowed_vlans: 2-4094
+  mlag_dual_primary_detection: false
+  mlag_interfaces:
+  - Ethernet1
+  - Ethernet6
+  mlag_l3: true
+  mlag_peer_l3_vlan: 4093
+  mlag_role: secondary
+  mlag_peer: leaf3
+  mlag_peer_mgmt_ip: 192.168.0.14
+  mlag_ip: 10.255.252.5
+  mlag_peer_ip: 10.255.252.4
+  mlag_l3_ip: 10.255.251.5
+  mlag_peer_l3_ip: 10.255.251.4
+  vtep_loopback_ipv4_pool: 192.168.254.0/24
+  vtep_loopback: Loopback1
+  vtep_ip: 192.168.254.3
+  tenants:
+    Tenant_A:
+      vrfs:
+        Tenant_A_APP_Zone:
+          svis:
+          - 130
+          - 131
+        Tenant_A_DB_Zone:
+          svis:
+          - 140
+          - 141
+        Tenant_A_OP_Zone:
+          svis:
+          - 110
+          - 111
+        Tenant_A_WEB_Zone:
+          svis:
+          - 120
+          - 121
+          - 122
+          - 124
+      l2vlans:
+      - 160
+      - 161
+    Tenant_B:
+      vrfs:
+        Tenant_B_OP_Zone:
+          svis:
+          - 210
+          - 211
+      l2vlans: []
+    Tenant_C:
+      vrfs:
+        Tenant_C_OP_Zone:
+          svis:
+          - 310
+          - 311
+      l2vlans: []
+  vlans:
+  - 130
+  - 131
+  - 140
+  - 141
+  - 110
+  - 111
+  - 120
+  - 121
+  - 122
+  - 124
+  - 160
+  - 161
+  - 210
+  - 211
+  - 310
+  - 311
+topology:
+  links:
+    Ethernet2:
+      peer: spine1
+      peer_interface: Ethernet5
+      peer_type: spine
+      peer_bgp_as: '65001'
+      type: underlay_p2p
+      ip_address: 172.18.255.13
+      peer_ip_address: 172.18.255.12
+    Ethernet3:
+      peer: spine2
+      peer_interface: Ethernet5
+      peer_type: spine
+      peer_bgp_as: '65001'
+      type: underlay_p2p
+      ip_address: 172.18.255.15
+      peer_ip_address: 172.18.255.14
+  peers:
+  - spine1
+  - spine2
+  vlans:
+  - 130
+  - 131
+  - 140
+  - 141
+  - 110
+  - 111
+  - 120
+  - 121
+  - 122
+  - 124
+  - 160
+  - 161
+  - 210
+  - 211
+  - 310
+  - 311
+playbook_dir: /home/coder/project/LABFILES/DAY3
+ansible_playbook_python: /usr/bin/python3
+ansible_config_file: /home/coder/project/LABFILES/DAY3/ansible.cfg
+groups:
+  all:
+  - cv_server
+  - spine1
+  - spine2
+  - leaf1
+  - leaf2
+  - leaf3
+  - leaf4
+  ungrouped: []
+  AVD_LAB:
+  - cv_server
+  - spine1
+  - spine2
+  - leaf1
+  - leaf2
+  - leaf3
+  - leaf4
+  CVP:
+  - cv_server
+  ATD_FABRIC:
+  - spine1
+  - spine2
+  - leaf1
+  - leaf2
+  - leaf3
+  - leaf4
+  ATD_SPINES:
+  - spine1
+  - spine2
+  ATD_LEAFS:
+  - leaf1
+  - leaf2
+  - leaf3
+  - leaf4
+  ATD_LEAF1:
+  - leaf1
+  - leaf2
+  ATD_LEAF2:
+  - leaf3
+  - leaf4
+  ATD_TENANTS_NETWORKS:
+  - leaf1
+  - leaf2
+  - leaf3
+  - leaf4
+  ATD_SERVERS:
+  - leaf1
+  - leaf2
+  - leaf3
+  - leaf4
+omit: __omit_place_holder__17d3ad4e2debb15aad19701d1e69c437b0e26225
+ansible_version:
+  string: 2.12.3
+  full: 2.12.3
+  major: 2
+  minor: 12
+  revision: 3
+ansible_check_mode: false
+ansible_diff_mode: false
+ansible_forks: 15
+ansible_inventory_sources:
+- /home/coder/project/LABFILES/DAY3/inventory.yml
+ansible_skip_tags: []
+ansible_run_tags:
+- build
+ansible_verbosity: 0

@@ -42,6 +42,11 @@ tenants:
             tags: [ web ]
             enabled: true
             ip_address_virtual: 10.12.22.1/24
+          124:
+            name: Tenant_A_WEBZone_4
+            tags: [ web ]
+            enabled: true
+            ip_address_virtual: 10.12.23.1/24
       Tenant_A_APP_Zone:
         vrf_vni: 12
         svis:
@@ -75,7 +80,7 @@ tenants:
             name: Tenant_A_WAN_Zone_1
             tags: [ wan ]
             enabled: true
-            ip_address_virtual: 10.12.40.1/24
+            ip_address_virtual: 10.12.40.1/24       
     l2vlans:
       160:
         vni_override: 50160

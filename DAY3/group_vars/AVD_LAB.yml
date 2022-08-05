@@ -3,7 +3,7 @@ local_users:
   arista:
     privilege: 15
     role: network-admin
-    sha512_password: "CHANGEME"
+    sha512_password: "$6$tZGNm.Lk9pVAJIOv$ofRKnm13qcmn5F22PnURGUJqW7TAMR4OLGz0z7KJXcTcXhufe.vio0p1hsHMIa0AeYi/0zF8MWJbCEvlfV3D11"
 
 # #cvp_ingestauth_key: "/tmp/cv-onboarding-token"
 mgmt_gateway: 192.168.0.1
